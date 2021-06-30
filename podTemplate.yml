@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: slave
+  name: slave
+spec:
+  containers:
+  - name: node 
+    image: node:lts-alpine
+    command:
+    - cat
+    tty: true
+  - name: kubectl
+    image: alpine 
+    command:
+    - cat 
+    tty: true
+    volumeMounts:
+    - name: kube
+      mountPath: "/home/.kube"
+      readOnly: true
+  serviceAccountName: jenkins-pipeline
+  volumes:
+  - name: kube
+    secret:
+      secretName: "kube-config-66458m76b4"
