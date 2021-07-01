@@ -1,5 +1,3 @@
-import groovy.transform.Field
-
 pipeline {
     agent {
         kubernetes {
@@ -35,44 +33,27 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to development') {
-            when {
-                branch 'dev'
-            }
+        stage('Deploy') {
             steps {
                 container('kubectl') {
                     sh '''
                     kubectl version --short
-                    kubectl run nginx --image nginx -n development
+                    kubectl run nginx --image nginx -n ${BRANCH_NAME}
                     '''
                 }
             }
         }
-        stage('Deploy to qa') {
+        stage('Delete Deployment') {
             when {
-                anyOf { 
-                    branch 'qa';
-                    branch 'master' 
-                } 
+                branch 'development'
             }
             steps {
-                container('kubectl') {
-                    sh '''
-                    kubectl version --short
-                    kubectl run nginx --image nginx -n qa
-                    '''
+                script {
+                    def DELETE_DEV = input(message: 'Would you like to delete the deployment?')
                 }
-            }
-        }
-        stage('Deploy to production') {
-            when {
-                branch 'master'
-            }
-            steps {
                 container('kubectl') {
                     sh '''
-                    kubectl version --short
-                    kubectl run nginx --image nginx -n production
+                    kubectl delete po nginx -n ${BRANCH_NAME}
                     '''
                 }
             }
