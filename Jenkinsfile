@@ -36,25 +36,37 @@ pipeline {
         stage('Deploy') {
             steps {
                 container('kubectl') {
-                    sh '''
-                    kubectl version --short
-                    kubectl run nginx --image nginx -n ${BRANCH_NAME}
-                    '''
+                    script {
+                        if (env.BRANCH_NAME == 'master') {
+                            sh '''
+                            kubectl run nginx --image nginx -n production
+                            '''
+                        } else {
+                            sh '''
+                            kubectl run nginx --image nginx -n ${BRANCH_NAME}
+                            '''
+                        }
+                    }
                 }
             }
         }
         stage('Delete Deployment') {
-            when {
-                branch 'development'
-            }
             steps {
                 script {
-                    def DELETE_DEV = input(message: 'Would you like to delete the deployment?')
+                    input(message: 'Would you like to delete the deployment?')
                 }
                 container('kubectl') {
-                    sh '''
-                    kubectl delete po nginx -n ${BRANCH_NAME}
-                    '''
+                    script {
+                        if (env.BRANCH_NAME == 'master') {
+                                sh '''
+                                echo NOT ABLE TO DELETE A DEPLOYMENT ON PRODUCTION
+                                '''
+                        } else {
+                            sh '''
+                            kubectl delete po nginx -n ${BRANCH_NAME}
+                            '''
+                        }
+                    }
                 }
             }
         }
