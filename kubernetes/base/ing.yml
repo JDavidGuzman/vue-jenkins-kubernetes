@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: school-vue
+spec:
+  rules:
+  - host: "default.172.18.0.3.nip.io"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: school-vue
+            port:
+              number: 80

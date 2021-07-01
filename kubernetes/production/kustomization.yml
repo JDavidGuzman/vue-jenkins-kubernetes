@@ -1,0 +1,12 @@
+namespace: production
+resources:
+  - ../base
+commonLabels:
+  env: prod
+patchesJson6902:
+- target:
+    group: networking.k8s.io
+    version: v1
+    kind: Ingress
+    name: school-vue
+  path: patch-ing.yml

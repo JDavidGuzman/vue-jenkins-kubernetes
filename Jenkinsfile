@@ -9,9 +9,7 @@ pipeline {
         stage('Prepare Containers') {
             steps {
                 container('node') {
-                    sh '''
-                    npm install
-                    '''
+                    sh 'npm install'
                 }
                 container('kubectl') {
                     sh '''
@@ -30,16 +28,15 @@ pipeline {
             }
             steps {
                 container('node') {
-                    sh '''
-                    npm run build
-                    '''
+                    sh 'npm run build'
                 }
                 container('docker') {
                     sh '''
-                    ls
                     docker build -t ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT} .
                     docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}
                     docker push ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT}
+                    docker tag ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT} ${DOCKER_CREDENTIALS_USR}/school-vue:latest
+                    docker push ${DOCKER_CREDENTIALS_USR}/school-vue:latest
                     '''
                 }
             }
@@ -48,14 +45,10 @@ pipeline {
             steps {
                 container('kubectl') {
                     script {
-                        if (env.BRANCH_NAME == 'master') {
-                            sh '''
-                            kubectl run nginx --image nginx -n production
-                            '''
+                        if ( env.BRANCH_NAME == 'master') {
+                            sh 'kubectl apply -k kubernetes/production'
                         } else {
-                            sh '''
-                            kubectl run nginx --image nginx -n ${BRANCH_NAME}
-                            '''
+                            sh 'kubectl apply -k kubernetes/${BRANCH_NAME}'
                         }
                     }
                 }
@@ -63,17 +56,17 @@ pipeline {
         }
         stage('Delete Deployment') {
             when {
-                branch 'development';
-                branch 'qa'
+                anyOf {
+                    branch 'development';
+                    branch 'qa'
+                }
             }
             steps {
                 script {
                     input(message: 'Would you like to delete the deployment?')
                 }
                 container('kubectl') {
-                    sh '''
-                    kubectl delete po nginx -n ${BRANCH_NAME}
-                    ''' 
+                    sh 'kubectl delete -k kubernetes/${BRANCH_NAME}' 
                 }
             }
         }

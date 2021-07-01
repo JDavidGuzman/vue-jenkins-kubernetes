@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: school-vue
+  name: school-vue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: school-vue
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: school-vue
+    spec:
+      containers:
+      - image: jdavidguzman/school-vue:latest
+        name: school-vue
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
