@@ -25,10 +25,21 @@ pipeline {
             }
         }
         stage('Build') {
+            environment {
+                DOCKER_CREDENTIALS = credentials('DOCKER_CREDENTIALS')
+            }
             steps {
                 container('node') {
                     sh '''
                     npm run build
+                    '''
+                }
+                container('docker') {
+                    sh '''
+                    ls
+                    docker build -t ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT} .
+                    docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}
+                    docker push ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT}
                     '''
                 }
             }
@@ -51,22 +62,18 @@ pipeline {
             }
         }
         stage('Delete Deployment') {
+            when {
+                branch 'development';
+                branch 'qa'
+            }
             steps {
                 script {
                     input(message: 'Would you like to delete the deployment?')
                 }
                 container('kubectl') {
-                    script {
-                        if (env.BRANCH_NAME == 'master') {
-                                sh '''
-                                echo NOT ABLE TO DELETE A DEPLOYMENT ON PRODUCTION
-                                '''
-                        } else {
-                            sh '''
-                            kubectl delete po nginx -n ${BRANCH_NAME}
-                            '''
-                        }
-                    }
+                    sh '''
+                    kubectl delete po nginx -n ${BRANCH_NAME}
+                    ''' 
                 }
             }
         }
