@@ -23,13 +23,24 @@ pipeline {
             }
         }
         stage('Build') {
-            environment {
-                DOCKER_CREDENTIALS = credentials('DOCKER_CREDENTIALS')
-            }
             steps {
                 container('node') {
                     sh 'npm run build'
                 }
+            }
+        }
+        stage('Test') {
+            steps {
+                container('node') {
+                    sh 'npm run test:unit'
+                }
+            }
+        }
+        stage('Push') {
+            environment {
+                DOCKER_CREDENTIALS = credentials('DOCKER_CREDENTIALS')
+            }
+            steps {
                 container('docker') {
                     sh '''
                     docker build -t ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT} .

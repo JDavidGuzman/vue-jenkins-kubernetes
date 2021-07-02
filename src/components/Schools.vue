@@ -4,7 +4,7 @@
     <div class="spacer"></div>
     <div v-for="course in courses" :key="course.id"  class="courses">
       <div @click="$emit('select-course', course)">
-        <span>{{ course }}</span>
+        <span data-test="course">{{ course }}</span>
       </div>
     </div>
     <div v-for="school in schools" :key="school.id">

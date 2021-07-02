@@ -27,7 +27,7 @@
         </div>
         <div v-if="teacher">
             <tr>
-                <td class="square">Teacher</td>
+                <td class="square" data-test="teacher">Teacher</td>
                 <td class="square">{{ teacher.Firstname }}</td>
                 <td class="square">{{ teacher.Lastname }}</td>
                 <td class="square">{{ teacher.Email }}</td>
@@ -35,10 +35,10 @@
         </div>
         <div v-if="students">
             <tr v-for="(student, index) in students" :key="student.id" @click="getGrades(student.Student_ID, index)">
-                <td class="square">{{ index + 1 }}</td>
-                <td class="square">{{ student.Firstname }}</td>
-                <td class="square">{{ student.Lastname }}</td>
-                <td class="square">{{ student.Email }}</td>
+                <td class="square" data-test="index">{{ index + 1 }}</td>
+                <td class="square" data-test="Firstname">{{ student.Firstname }}</td>
+                <td class="square" data-test="Lastname">{{ student.Lastname }}</td>
+                <td class="square" data-test="Email">{{ student.Email }}</td>
             </tr>
         </div>
     </table>
