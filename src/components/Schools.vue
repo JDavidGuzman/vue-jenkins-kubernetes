@@ -9,7 +9,7 @@
     </div>
     <div v-for="school in schools" :key="school.id">
       <div @click="$emit('select-school', school)" class="item">
-        <span>{{ school.Name }}</span>
+        <span>{{ school[1]['stringValue'] }}</span>
       </div>
     </div>
   </div>
