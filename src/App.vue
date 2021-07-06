@@ -33,8 +33,8 @@ export default {
     this.schools = data['schools']
     },
     selectSchool(school) {
-      this.school_id = school.School_ID
-      this.school_name = school.Name
+      this.school_id = school[0]['longValue']
+      this.school_name = school[1]['stringValue']
     },
     async selectCourse(course) {
       this.course = await course
@@ -43,7 +43,6 @@ export default {
       this.teacher = await data['teacher'][0]
       this.students = await data['students']
     }
-
   }
 }
 </script>

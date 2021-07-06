@@ -1,11 +1,11 @@
 <template>
     <table v-if="grades" class="grades">
         <tr>
-            <th class="course grades-header"><h1>{{selected_student.Firstname}} {{selected_student.Lastname}}</h1><p>email: {{selected_student.Email}}</p></th>
+            <th class="course grades-header"><h1>{{ selected_student[1]['stringValue'] }} {{ selected_student[2]['stringValue'] }}</h1><p>email: {{ selected_student[3]['stringValue'] }}</p></th>
         </tr>
-        <tr v-for="subject in Object.keys(grades)" :key="subject.id">
-            <td class="grades-square">{{subject}}</td>
-            <td class="grades-square"> {{grades[subject]}} </td>
+        <tr v-for="(subject, index) in subjects" :key="subject.id">
+            <td class="grades-square">{{ subject }}</td>
+            <td class="grades-square"> {{ grades[index]['stringValue'] }} </td>
         </tr>
         <tr>
             <td class="grades-button">
@@ -28,17 +28,17 @@
         <div v-if="teacher">
             <tr>
                 <td class="square" data-test="teacher">Teacher</td>
-                <td class="square">{{ teacher.Firstname }}</td>
-                <td class="square">{{ teacher.Lastname }}</td>
-                <td class="square">{{ teacher.Email }}</td>
+                <td class="square">{{ teacher[1]['stringValue'] }}</td>
+                <td class="square">{{ teacher[2]['stringValue'] }}</td>
+                <td class="square">{{ teacher[3]['stringValue'] }}</td>
             </tr>
         </div>
         <div v-if="students">
-            <tr v-for="(student, index) in students" :key="student.id" @click="getGrades(student.Student_ID, index)">
+            <tr v-for="(student, index) in students" :key="student.id" @click="getGrades(student[0]['longValue'], index)">
                 <td class="square" data-test="index">{{ index + 1 }}</td>
-                <td class="square" data-test="Firstname">{{ student.Firstname }}</td>
-                <td class="square" data-test="Lastname">{{ student.Lastname }}</td>
-                <td class="square" data-test="Email">{{ student.Email }}</td>
+                <td class="square" data-test="Firstname">{{ student[1]['stringValue'] }}</td>
+                <td class="square" data-test="Lastname">{{ student[2]['stringValue'] }}</td>
+                <td class="square" data-test="Email">{{ student[3]['stringValue'] }}</td>
             </tr>
         </div>
     </table>
@@ -55,7 +55,8 @@
     data() {
         return {
             grades:null,
-            selected_student:null
+            selected_student:null,
+            subjects: ['Math','Biology', 'Chemistry', 'Physics', 'Languages', 'Arts', 'Sports', 'Politics']
         }
     },
     methods: {
