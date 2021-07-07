@@ -41,13 +41,9 @@ pipeline {
                 DOCKER_CREDENTIALS = credentials('DOCKER_CREDENTIALS')
             }
             steps {
-                container('docker') {
+                container('kaniko') {
                     sh '''
-                    docker build -t ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT} .
-                    docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}
-                    docker push ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT}
-                    docker tag ${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT} ${DOCKER_CREDENTIALS_USR}/school-vue:latest
-                    docker push ${DOCKER_CREDENTIALS_USR}/school-vue:latest
+                    /kaniko/executor --context $(pwd) --destination=${DOCKER_CREDENTIALS_USR}/school-vue:${GIT_COMMIT} --destination=${DOCKER_CREDENTIALS_USR}/school-vue:latest
                     '''
                 }
             }

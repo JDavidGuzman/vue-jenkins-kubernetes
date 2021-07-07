@@ -20,25 +20,23 @@ spec:
     - name: kube
       mountPath: "/home/.kube"
       readOnly: true
-  - name: docker 
-    image: docker:1.12.6 
+  - name: kaniko 
+    image: gcr.io/kaniko-project/executor:debug
     command:
-    - cat
-    tty: true 
-    env: 
-      - name: DOCKER_HOST 
-        value: tcp://localhost:2375 
-  - name: dind-daemon 
-    image: docker:1.12.6-dind
-    securityContext: 
-        privileged: true 
-    volumeMounts: 
-      - name: docker-graph-storage 
-        mountPath: /var/lib/docker   
+    - cat 
+    tty: true
+    volumeMounts:
+      - name: kaniko-secret 
+        mountPath: /kaniko/.docker 
   serviceAccountName: jenkins-pipeline
   volumes:
+  - name: kaniko-secret 
+    secret: 
+      secretName: "docker-cred-gm5hkcc2mt"
+      items:
+      - key: .dockerconfigjson 
+        path: config.json
   - name: kube
     secret:
-      secretName: "kube-config-66458m76b4"
-  - name: docker-graph-storage 
-    emptyDir: {}
+      secretName: "kube-config-bhg52khm6t"
+  
